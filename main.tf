@@ -1,5 +1,5 @@
 resource "google_composer_environment" "example" {
-  provider = var.provider
+  provider = google-beta
   name     = var.name
   project  = var.project
   region   = var.region
