@@ -43,7 +43,7 @@ resource "google_composer_environment" "example" {
 
 resource "google_project_iam_binding" "binding" {
   project  =  var.project
-  role = ["roles/composer.ServiceAgentV2Ext","roles/composer.admin"]
+  role = "roles/composer.ServiceAgentV2Ext"
   members = [
     "serviceAccount:service-453860642537@cloudcomposer-accounts.iam.gserviceaccount.com",
   ]
