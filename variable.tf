@@ -3,10 +3,6 @@ variable "name" {
   description = "The name of  Cloud Composer the Environment"
 }
 
-variable "provider" {
-    type = string
-    description = "The provider"
-}
 variable "project" {
   type        = string
   description = "Project ID where Cloud Composer Environment is created."
