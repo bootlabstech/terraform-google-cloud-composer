@@ -3,6 +3,9 @@ resource "google_composer_environment" "example" {
   name     = var.name
   project  = var.project
   region   = var.region
+  depends_on = [
+    google_project_iam_binding.binding
+  ]
   config {
 
     software_config {
@@ -38,14 +41,13 @@ resource "google_composer_environment" "example" {
       service_account = var.service_account
 
     }
+    
   }  
 }
 
 resource "google_project_iam_binding" "binding" {
   project  =  var.project
   role = "roles/composer.ServiceAgentV2Ext"
-  members = [
-    "serviceAccount:service-453860642537@cloudcomposer-accounts.iam.gserviceaccount.com",
-  ]
+  members = var.members
 }
 

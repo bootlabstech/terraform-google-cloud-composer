@@ -15,7 +15,7 @@ variable "region" {
 
 variable "image_version" {
   type        = string
-  description = "The version of the software running in the environment. This encapsulates both the version of Cloud Composer functionality and the version of Apache Airflow. It must match the regular expression composer-[0-9]+\\.[0-9]+(\\.[0-9]+)?-airflow-[0-9]+\\.[0-9]+(\\.[0-9]+.*)?."
+  description = "The version of the software running in the environment"
 }
 
 #scheduler config
@@ -105,10 +105,14 @@ variable "service_account" {
     description = "The service_account to be created and assign the roles."
 }
 
+variable "members" {
+    type = list(string)
+    description = "The service account to be added in resources"
+}
 
-// optional variables
 variable "timeouts" {
     type = string
     description = "The time to take create resources"
 }
+
 
