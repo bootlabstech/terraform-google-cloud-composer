@@ -119,3 +119,24 @@ variable "host_project" {
     type = string
     description = "(optional) describe your variable"
 }
+
+
+variable "services_secondary_range_name" {
+  type        = string
+  description = "the secondary range name of the subnet to be used for services, this is needed if is_shared_vpc is enabled"
+}
+
+variable "cluster_secondary_range_name" {
+  type        = string
+  description = "the secondary range name of the subnet to be used for pods, this is needed if is_shared_vpc is enabled"
+}
+
+variable "master_ipv4_cidr_block" {
+  type        = string
+  description = "master_ipv4_cidr_block"
+}
+
+variable "enable_private_endpoint" {
+  type        = bool
+  description = "enable_private_endpoint"  
+}

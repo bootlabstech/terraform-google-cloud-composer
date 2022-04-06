@@ -5,7 +5,9 @@ resource "google_composer_environment" "example" {
   region   = var.region
   depends_on = [
     google_project_iam_binding.binding,
-    google_project_iam_member.project
+    google_project_iam_member.project,
+    google_compute_subnetwork_iam_member.cloudservices,
+    google_compute_subnetwork_iam_member.container_engine_robot
   ]
   config {
 
@@ -39,6 +41,16 @@ resource "google_composer_environment" "example" {
     node_config {
       network         = var.network
       subnetwork      = var.subnetwork
+
+      ip_allocation_policy {
+        cluster_secondary_range_name = var.cluster_secondary_range_name
+        services_secondary_range_name = var.services_secondary_range_name
+      }
+    }
+
+    private_environment_config {
+      enable_private_endpoint = var.enable_private_endpoint
+      master_ipv4_cidr_block  = var.enable_private_endpoint ? var.master_ipv4_cidr_block : null
     }
     
   }  
@@ -46,17 +58,37 @@ resource "google_composer_environment" "example" {
 
 resource "google_project_iam_binding" "binding" {
   project  =  var.project
-  role = "roles/composer.ServiceAgentV2Ext"
+  role = <<EOF
+    {
+    "roles/composer.ServiceAgentV2Ext",
+    "roles/composer.sharedVpcAgent",
+    "roles/composer.admin"
+}
+EOF
   members = var.members
 }
 
-data "google_project" "host_project" {
-  project_id = var.host_project
+data "google_project" "service_project" {
+  project_id = var.project
 }
 
 resource "google_project_iam_member" "project" {
-project = data.google_project.host_project[0].project_id
+  project = var.host_project
   role    = "roles/container.hostServiceAgentUser"
-  member = "serviceAccount:service-${data.google_project.service_project[0].number}@container-engine-robot.iam.gserviceaccount.com"
+  member = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
+
+resource "google_compute_subnetwork_iam_member" "cloudservices" {
+  project    = var.host_project
+  subnetwork = var.subnetwork
+  role       = "roles/compute.networkUser"
+  member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
+}
+
+resource "google_compute_subnetwork_iam_member" "container_engine_robot" {
+  project    = var.host_project
+  subnetwork = var.subnetwork
+  role       = "roles/compute.networkUser"
+  member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
+}
