@@ -4,7 +4,8 @@ resource "google_composer_environment" "example" {
   project  = var.project
   region   = var.region
   depends_on = [
-    google_project_iam_binding.binding
+    google_project_iam_binding.binding,
+    google_project_iam_member.project
   ]
   config {
 
