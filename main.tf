@@ -50,8 +50,13 @@ resource "google_project_iam_binding" "binding" {
   members = var.members
 }
 
-resource "google_project_iam_member" "project" {
-  project = var.host_project
-  role    = "roles/container.hostServiceAgentUser"
-  member = "serviceAccount:service-${var.host_project}@container-engine-robot.iam.gserviceaccount.com"
+data "google_project" "host_project" {
+  project_id = var.host_project
 }
+
+resource "google_project_iam_member" "project" {
+project = data.google_project.host_project[0].project_id
+  role    = "roles/container.hostServiceAgentUser"
+  member = "serviceAccount:service-${data.google_project.service_project[0].number}@container-engine-robot.iam.gserviceaccount.com"
+}
+
