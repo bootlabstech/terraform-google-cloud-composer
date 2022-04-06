@@ -115,4 +115,7 @@ variable "timeouts" {
     description = "The time to take create resources"
 }
 
-
+variable "host_project" {
+    type = string
+    description = "(optional) describe your variable"
+}
