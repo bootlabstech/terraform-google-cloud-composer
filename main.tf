@@ -38,8 +38,6 @@ resource "google_composer_environment" "example" {
     node_config {
       network         = var.network
       subnetwork      = var.subnetwork
-      service_account = var.service_account
-
     }
     
   }  
@@ -51,3 +49,8 @@ resource "google_project_iam_binding" "binding" {
   members = var.members
 }
 
+resource "google_project_iam_member" "project" {
+  project = var.host_project
+  role    = "roles/container.hostServiceAgentUser"
+  member = "serviceAccount:service-${var.host_project}@container-engine-robot.iam.gserviceaccount.com"
+}
