@@ -71,9 +71,10 @@ data "google_project" "service_project" {
   project_id = var.project
 }
 
+
 resource "google_project_iam_member" "project" {
   project = var.host_project
-    for_each = test3([
+    for_each = toset([
     "roles/composer.ServiceAgentV2Ext",
     "roles/compute.networkUser",
     "roles/composer.sharedVpcAgent",
@@ -88,7 +89,7 @@ resource "google_project_iam_member" "project" {
 resource "google_compute_subnetwork_iam_member" "cloudservices" {
   project    = var.host_project
   subnetwork = var.subnetwork
-  for_each = test([
+  for_each = toset([
     "roles/composer.ServiceAgentV2Ext",
     "roles/compute.networkUser",
     "roles/composer.sharedVpcAgent",
@@ -101,7 +102,7 @@ resource "google_compute_subnetwork_iam_member" "cloudservices" {
 resource "google_compute_subnetwork_iam_member" "container_engine_robot" {
   project    = var.host_project
   subnetwork = var.subnetwork
-  for_each = test1([
+  for_each = toset([
     "roles/composer.ServiceAgentV2Ext",
     "roles/compute.networkUser",
     "roles/composer.sharedVpcAgent",
