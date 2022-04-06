@@ -73,7 +73,14 @@ data "google_project" "service_project" {
 
 resource "google_project_iam_member" "project" {
   project = var.host_project
-  role    = "roles/container.hostServiceAgentUser"
+    for_each = test3([
+    "roles/composer.ServiceAgentV2Ext",
+    "roles/compute.networkUser",
+    "roles/composer.sharedVpcAgent",
+    "roles/container.hostServiceAgentUser",
+    "roles/composer.admin",
+  ])
+  role       = each.key
   member = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
@@ -81,13 +88,25 @@ resource "google_project_iam_member" "project" {
 resource "google_compute_subnetwork_iam_member" "cloudservices" {
   project    = var.host_project
   subnetwork = var.subnetwork
-  role       = "roles/compute.networkUser"
+  for_each = test([
+    "roles/composer.ServiceAgentV2Ext",
+    "roles/compute.networkUser",
+    "roles/composer.sharedVpcAgent",
+    "roles/composer.admin",
+  ])
+  role       = each.key
   member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
 }
 
 resource "google_compute_subnetwork_iam_member" "container_engine_robot" {
   project    = var.host_project
   subnetwork = var.subnetwork
-  role       = "roles/compute.networkUser"
+  for_each = test1([
+    "roles/composer.ServiceAgentV2Ext",
+    "roles/compute.networkUser",
+    "roles/composer.sharedVpcAgent",
+    "roles/composer.admin",
+  ])
+  role = each.key
   member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
