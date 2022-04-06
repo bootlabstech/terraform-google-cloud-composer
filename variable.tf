@@ -105,10 +105,10 @@ variable "service_account" {
     description = "The service_account to be created and assign the roles."
 }
 
-# variable "members" {
-#     type = list(string)
-#     description = "The service account to be added in resources"
-# }
+variable "members" {
+    type = list(string)
+    description = "The service account to be added in resources"
+}
 
 variable "timeouts" {
     type = string

@@ -3,9 +3,9 @@ resource "google_composer_environment" "example" {
   name     = var.name
   project  = var.project
   region   = var.region
-  # depends_on = [
-  #   google_project_iam_binding.binding
-  # ]
+  depends_on = [
+    google_project_iam_binding.binding
+  ]
   config {
 
     software_config {
@@ -45,9 +45,9 @@ resource "google_composer_environment" "example" {
   }  
 }
 
-# resource "google_project_iam_binding" "binding" {
-#   project  =  var.project
-#   role = "roles/composer.ServiceAgentV2Ext"
-#   members = var.members
-# }
+resource "google_project_iam_binding" "binding" {
+  project  =  var.project
+  role = "roles/composer.ServiceAgentV2Ext"
+  members = var.members
+}
 
