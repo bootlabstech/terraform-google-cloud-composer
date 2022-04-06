@@ -58,12 +58,12 @@ resource "google_composer_environment" "example" {
 
 resource "google_project_iam_binding" "binding" {
   project  =  var.project
-  role = <<EOF
-  "projects/{m1rec-763338}/roles/{composer.ServiceAgentV2Ext}",
-  "projects/{m1rec-763338}/roles/{composer.sharedVpcAgent}",
-  "projects/{m1rec-763338}/roles/{composer.admin}"
-  }
-  EOF
+  for_each = toset([
+    "roles/composer.ServiceAgentV2Ext",
+    "roles/composer.sharedVpcAgent",
+    "roles/composer.admin",
+  ])
+  role =each.key
   members = var.members
 }
 
