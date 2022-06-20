@@ -1,125 +1,62 @@
-variable "name" {
+variable "composer_env_name" {
   type        = string
   description = "The name of  Cloud Composer the Environment"
 }
-
-variable "project" {
-  type        = string
+variable "project_id" {
   description = "Project ID where Cloud Composer Environment is created."
+  type        = string
 }
-
 variable "region" {
   type        = string
   description = "Region where the Cloud Composer Environment is created."
 }
 
+variable "labels" {
+  type        = map(string)
+  description = "The resource labels (a map of key/value pairs) to be applied to the Cloud Composer."
+}
 variable "image_version" {
   type        = string
-  description = "The version of the software running in the environment"
-}
-
-#scheduler config
-
-variable "scheduler_cpu" {
-    type        = number
-    description = "The number of CPUs for a single Airflow scheduler."
-}
-
-variable "scheduler_memory_gb" {
-    type        = number
-    description = "The amount of memory (GB) for a single Airflow scheduler."
-}
-
-variable "scheduler_storage_gb" {
-    type        = number
-    description = "The amount of storage (GB) for a single Airflow scheduler."
-}
-
-variable "scheduler_count" {
-    type        = number
-    description = "The number of schedulers count to be created."
-}
-
-# web_server config
-
-variable "web_server_cpu" {
-    type        = number
-    description = "The number of CPUs for the Airflow web server."
-}
-
-variable "web_server_memory_gb" {
-    type        = number
-    description = "The amount of memory (GB) for the Airflow web server."
-}
-
-variable "web_server_storage_gb" {
-    type        = number
-    description = "The amount of storage (GB) for the Airflow web server."
-}
-
-# worker config
-
-variable "worker_cpu" {
-    type        = number
-    description = "The number of CPUs for a single Airflow worker."
-}
-
-variable "worker_memory_gb" {
-    type        = number
-    description = "The amount of memory (GB) for a single Airflow worker."
-}
-
-variable "worker_storage_gb" {
-    type        = number
-    description = "The amount of storage (GB) for a single Airflow worker."
-}
-
-variable "worker_min_count" {
-    type        = number
-    description = "The minimum number of Airflow workers that the environment can run."
-}
-
-variable "worker_max_count" {
-    type        = number
-    description = "The maximum number of Airflow workers that the environment can run."
-}
-
-variable "environment_size" {
-    type        = string
-    description = " The environment size controls the performance parameters of the managed Cloud Composer infrastructure that includes the Airflow database. "
-}
-
-variable "network" {
-    type = string
-    description = "The ID of network"
-
-}
-
-variable "subnetwork" {
-    type = string
-    description = "The ID of subnetwork"
-}
-
-variable "service_account" {
-    type = string
-    description = "The service_account to be created and assign the roles."
-}
-
-variable "members" {
-    type = list(string)
-    description = "The service account to be added in resources"
+  description = "The version of the software running in the environment."
 }
 
 variable "timeouts" {
-    type = string
-    description = "The time to take create resources"
+  type        = string
+  description = "The resource provides the following Timeouts configuration to provision"
 }
 
-variable "host_project" {
-    type = string
-    description = "(optional) describe your variable"
+variable "kms_key_name" {
+  type        = string
+  description = "Customer-managed Encryption Key available through Google's Key Management Service."
 }
 
+variable "shared_vpc" {
+  type        = bool
+  description = "(optional) describe your variable"
+  default     = false
+}
+
+# node_config
+variable "environment_size" {
+  type        = string
+  description = " The environment size controls the performance parameters of the managed Cloud Composer infrastructure that includes the Airflow database."
+}
+
+variable "network" {
+  type        = string
+  description = "The VPC network to host the composer cluster."
+}
+
+variable "subnetwork" {
+  type        = string
+  description = "The subnetwork to host the composer cluster."
+}
+
+variable "use_ip_allocation_policy" {
+  type        = bool
+  description = "enable ip_allocation_policy"
+  default     = false
+}
 
 variable "services_secondary_range_name" {
   type        = string
@@ -131,12 +68,66 @@ variable "cluster_secondary_range_name" {
   description = "the secondary range name of the subnet to be used for pods, this is needed if is_shared_vpc is enabled"
 }
 
-variable "master_ipv4_cidr_block" {
-  type        = string
-  description = "master_ipv4_cidr_block"
+
+# software_config
+variable "enable_software_config" {
+  type        = bool
+  description = "enable_software_config to run the block"
+  default     = false
+}
+variable "airflow_config_overrides" {
+  type        = map(string)
+  description = "Airflow configuration properties to override. for example \"core-dags_are_paused_at_creation\". https://cloud.google.com/composer/docs/concepts/airflow-configurations#airflow_configuration_blacklists"
+}
+variable "pypi_packages" {
+  type        = map(string)
+  description = " Custom Python Package Index (PyPI) packages to be installed in the environment. Keys refer to the lowercase package name (e.g. \"numpy\")."
+}
+variable "env_variables" {
+  type        = map(string)
+  description = "Variables of the airflow environment."
 }
 
-variable "enable_private_endpoint" {
+
+# private_environment_config
+variable "use_private_environment" {
+  description = "Enable private environment."
   type        = bool
-  description = "enable_private_endpoint"  
+  default     = false
+}
+variable "master_ipv4_cidr" {
+  description = "The CIDR block from which IP range in tenant project will be reserved for the master."
+  type        = string
+}
+variable "cloud_sql_ipv4_cidr" {
+  description = "The CIDR block from which IP range in tenant project will be reserved for Cloud SQL."
+  type        = string
+}
+variable "cloud_composer_network_ipv4_cidr_block" {
+  description = "The CIDR block from which IP range in tenant project will be reserved."
+  type        = string
+}
+
+
+# maintenance_window
+variable "use_maintenance_window" {
+  type        = bool
+  description = "Enable maintenance_window"
+  default     = false
+}
+variable "maintenance_start_time" {
+  description = "Time window specified for daily or recurring maintenance operations in RFC3339 format"
+  type        = string
+}
+variable "maintenance_end_time" {
+  description = "Time window specified for recurring maintenance operations in RFC3339 format"
+  type        = string
+}
+variable "maintenance_recurrence" {
+  description = "Frequency of the recurring maintenance window in RFC5545 format."
+  type        = string
+}
+variable "host_project" {
+  type        = string
+  description = "Shared vpc using network from host project"
 }
