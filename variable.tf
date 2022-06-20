@@ -33,7 +33,7 @@ variable "kms_key_name" {
 variable "shared_vpc" {
   type        = bool
   description = "(optional) describe your variable"
-  default     = false
+  default     = true
 }
 
 # node_config
