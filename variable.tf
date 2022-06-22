@@ -55,7 +55,7 @@ variable "subnetwork" {
 variable "use_ip_allocation_policy" {
   type        = bool
   description = "enable ip_allocation_policy"
-  default     = false
+  default     = true
 }
 
 variable "services_secondary_range_name" {
@@ -93,7 +93,7 @@ variable "env_variables" {
 variable "use_private_environment" {
   description = "Enable private environment."
   type        = bool
-  default     = false
+  default     = true
 }
 variable "master_ipv4_cidr" {
   description = "The CIDR block from which IP range in tenant project will be reserved for the master."

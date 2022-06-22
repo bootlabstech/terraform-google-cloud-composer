@@ -20,7 +20,7 @@ resource "google_composer_environment" "composer" {
       subnetwork      = var.subnetwork
       service_account = google_service_account.service_account.email
       dynamic "ip_allocation_policy" {
-        for_each = var.use_ip_allocation_policy ? [{}] : []
+        for_each = var.use_ip_allocation_policy ? [1] : []
         content {
           cluster_secondary_range_name  = var.cluster_secondary_range_name
           services_secondary_range_name = var.services_secondary_range_name
