@@ -106,6 +106,12 @@ resource "google_project_iam_binding" "binding" {
   role    = "roles/composer.sharedVpcAgent"
   members = ["serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"]
 }
+resource "google_project_iam_binding" "network_binding" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+  role    = "roles/compute.networkUser"
+  members = ["serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"]
+}
 resource "google_project_iam_member" "project" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
