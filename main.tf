@@ -75,6 +75,7 @@ resource "google_project_iam_binding" "composer_binding" {
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
     "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
+    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com"
   ]
 }
 resource "google_project_iam_binding" "serviceAccount_binding" {
@@ -83,6 +84,7 @@ resource "google_project_iam_binding" "serviceAccount_binding" {
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
     "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
+    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
   ]
 }
 resource "google_service_account" "service_account" {
@@ -104,19 +106,29 @@ resource "google_project_iam_binding" "binding" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/composer.sharedVpcAgent"
-  members = ["serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"]
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
+  ]
 }
 resource "google_project_iam_binding" "network_binding" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/compute.networkUser"
-  members = ["serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"]
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
+  ]
 }
 resource "google_project_iam_binding" "network_binding2" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/composer.ServiceAgentV2Ext"
-  members = ["serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"]
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com"
+
+  ]
 }
 resource "google_project_iam_member" "project" {
   count   = var.shared_vpc ? 1 : 0
