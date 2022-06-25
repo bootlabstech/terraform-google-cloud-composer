@@ -4,7 +4,6 @@ resource "google_composer_environment" "composer" {
   project  = var.project_id
   region   = var.region
   labels   = length(keys(var.labels)) < 0 ? null : var.labels
-
   lifecycle {
     ignore_changes = [
       labels,
@@ -60,33 +59,21 @@ resource "google_composer_environment" "composer" {
     create = var.timeouts
   }
   depends_on = [
-    google_project_iam_binding.composer_binding,
+    google_project_iam_binding.composer1_binding,
+    google_project_iam_binding.composer2_binding,
+    google_project_iam_binding.composer3_binding,
     google_project_iam_binding.serviceAccount_binding,
-    google_project_iam_binding.binding,
-    google_project_iam_member.project,
-    google_compute_subnetwork_iam_member.cloudservices,
-    google_compute_subnetwork_iam_member.container_engine_robot,
+    google_project_iam_binding.network_binding,
+    google_project_iam_member.host_gke_member,
+    google_compute_subnetwork_iam_member.host_cloudservices_member,
+    google_compute_subnetwork_iam_member.host_container_engine_robot_member,
+    google_project_iam_member.composer-worker,
   ]
 }
 
-resource "google_project_iam_binding" "composer_binding" {
-  project = var.project_id
-  role    = "roles/composer.ServiceAgentV2Ext"
-  members = [
-    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-    "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
-    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com"
-  ]
-}
-resource "google_project_iam_binding" "serviceAccount_binding" {
-  project = var.project_id
-  role    = "roles/iam.serviceAccountAdmin"
-  members = [
-    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-    "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
-    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
-  ]
-}
+
+# project level permissions
+
 resource "google_service_account" "service_account" {
   project      = var.project_id
   account_id   = "composer-env-account"
@@ -97,18 +84,39 @@ resource "google_project_iam_member" "composer-worker" {
   role    = "roles/composer.worker"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
+resource "google_project_iam_binding" "composer1_binding" {
+  project = var.project_id
+  role    = "roles/composer.ServiceAgentV2Ext"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+resource "google_project_iam_binding" "serviceAccount_binding" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountAdmin"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+
+
+# host project level permissions
+
 data "google_project" "service_project" {
   project_id = var.project_id
 }
 
-# shared vpc
-resource "google_project_iam_binding" "binding" {
+resource "google_project_iam_binding" "composer2_binding" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/composer.sharedVpcAgent"
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
   ]
 }
 resource "google_project_iam_binding" "network_binding" {
@@ -117,33 +125,32 @@ resource "google_project_iam_binding" "network_binding" {
   role    = "roles/compute.networkUser"
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
   ]
 }
-resource "google_project_iam_binding" "network_binding2" {
+resource "google_project_iam_binding" "composer3_binding" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/composer.ServiceAgentV2Ext"
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-    "serviceAccount:composer-env-account@mahindra-datalake-prod-625956.iam.gserviceaccount.com"
-
+    "serviceAccount:${google_service_account.service_account.email}",
   ]
 }
-resource "google_project_iam_member" "project" {
+resource "google_project_iam_member" "host_gke_member" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
   role    = "roles/container.hostServiceAgentUser"
   member  = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
-resource "google_compute_subnetwork_iam_member" "cloudservices" {
+resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
   count      = var.shared_vpc ? 1 : 0
   project    = var.host_project
   subnetwork = var.subnetwork
   role       = "roles/compute.networkUser"
   member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
 }
-resource "google_compute_subnetwork_iam_member" "container_engine_robot" {
+resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_member" {
   count      = var.shared_vpc ? 1 : 0
   project    = var.host_project
   subnetwork = var.subnetwork
