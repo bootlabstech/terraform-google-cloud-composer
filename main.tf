@@ -1,6 +1,6 @@
 resource "google_composer_environment" "composer" {
   provider = google-beta
-  name     = var.composer_env_name
+  name     = var.name
   project  = var.project_id
   region   = var.region
   labels   = length(keys(var.labels)) < 0 ? null : var.labels

@@ -1,4 +1,4 @@
-variable "composer_env_name" {
+variable "name" {
   type        = string
   description = "The name of  Cloud Composer the Environment"
 }
