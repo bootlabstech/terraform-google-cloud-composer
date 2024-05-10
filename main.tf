@@ -146,6 +146,7 @@ resource "google_project_iam_member" "host_gke_member" {
 resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
   count      = var.shared_vpc ? 1 : 0
   project    = var.host_project
+  region = var.region
   subnetwork = var.subnetwork
   role       = "roles/compute.networkUser"
   member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
@@ -153,6 +154,7 @@ resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
 resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_member" {
   count      = var.shared_vpc ? 1 : 0
   project    = var.host_project
+  region = var.region
   subnetwork = var.subnetwork
   role       = "roles/compute.networkUser"
   member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
