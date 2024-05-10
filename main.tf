@@ -68,6 +68,7 @@ resource "google_composer_environment" "composer" {
     google_compute_subnetwork_iam_member.host_cloudservices_member,
     google_compute_subnetwork_iam_member.host_container_engine_robot_member,
     google_project_iam_member.composer-worker,
+    google_compute_subnetwork_iam_member.kms_cloud_composer
   ]
 }
 
@@ -159,4 +160,14 @@ resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_mem
   role       = "roles/compute.networkUser"
   member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
+resource "google_project_iam_binding" "kms_cloud_composer" {
+  count   = 1
+  project =var.project_id
+  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    
+  ]
+}
+
 
