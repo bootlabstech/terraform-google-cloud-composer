@@ -68,7 +68,7 @@ resource "google_composer_environment" "composer" {
     google_compute_subnetwork_iam_member.host_cloudservices_member,
     google_compute_subnetwork_iam_member.host_container_engine_robot_member,
     google_project_iam_member.composer-worker,
-    google_project_iam_binding.composer1_binding.kms_cloud_composer
+    google_project_iam_binding.kms_cloud_composer
   ]
 }
 
