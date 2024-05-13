@@ -170,7 +170,7 @@ resource "google_project_iam_binding" "kms_cloud_composer" {
     "serviceAccount:service-${data.google_project.service_project.number}@gcp-sa-artifactregistry.iam.gserviceaccount.com",
     "serviceAccount:service-${data.google_project.service_project.number}@gcp-sa-pubsub.iam.gserviceaccount.com",
     "serviceAccount:service-${data.google_project.service_project.number}@compute-system.iam.gserviceaccount.com",
-    # "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com",
+    "serviceAccount:service-${data.google_project.service_project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com",
 
     
 
