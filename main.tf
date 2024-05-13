@@ -55,9 +55,9 @@ resource "google_composer_environment" "composer" {
       }
     }
   }
-  timeouts {
-    create = var.timeouts
-  }
+  # timeouts {
+  #   create = var.timeouts
+  # }
   depends_on = [
     google_project_iam_binding.composer1_binding,
     google_project_iam_binding.composer2_binding,
