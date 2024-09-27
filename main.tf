@@ -6,7 +6,7 @@ resource "google_composer_environment" "composer" {
   labels   = length(keys(var.labels)) < 0 ? null : var.labels
   lifecycle {
     ignore_changes = [
-      labels,
+      labels,pypi_packages
     ]
   }
   config {
@@ -82,12 +82,18 @@ resource "google_service_account" "service_account" {
 }
 resource "google_project_iam_member" "composer-worker" {
   project = var.project_id
+   lifecycle {
+    ignore_changes = [ members ]
+  }
   role    = "roles/composer.worker"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 resource "google_project_iam_binding" "composer1_binding" {
   project = var.project_id
   role    = "roles/composer.ServiceAgentV2Ext"
+   lifecycle {
+    ignore_changes = [ members ]
+  }
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
     "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
@@ -97,6 +103,9 @@ resource "google_project_iam_binding" "composer1_binding" {
 resource "google_project_iam_binding" "serviceAccount_binding" {
   project = var.project_id
   role    = "roles/iam.serviceAccountAdmin"
+  lifecycle {
+    ignore_changes = [ members ]
+  }
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
     "serviceAccount:${data.google_project.service_project.number}-compute@developer.gserviceaccount.com",
@@ -111,59 +120,80 @@ data "google_project" "service_project" {
   project_id = var.project_id
 }
 
-# resource "google_project_iam_binding" "composer2_binding" {
-#   count   = var.shared_vpc ? 1 : 0
-#   project = var.host_project
-#   role    = "roles/composer.sharedVpcAgent"
-#   members = [
-#     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-#     "serviceAccount:${google_service_account.service_account.email}",
-#   ]
-# }
-# resource "google_project_iam_binding" "network_binding" {
-#   count   = var.shared_vpc ? 1 : 0
-#   project = var.host_project
-#   role    = "roles/compute.networkUser"
-#   members = [
-#     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-#     "serviceAccount:${google_service_account.service_account.email}",
-#   ]
-# }
-# resource "google_project_iam_binding" "composer3_binding" {
-#   count   = var.shared_vpc ? 1 : 0
-#   project = var.host_project
-#   role    = "roles/composer.ServiceAgentV2Ext"
-#   members = [
-#     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-#     "serviceAccount:${google_service_account.service_account.email}",
-#   ]
-# }
-# resource "google_project_iam_member" "host_gke_member" {
-#   count   = var.shared_vpc ? 1 : 0
-#   project = var.host_project
-#   role    = "roles/container.hostServiceAgentUser"
-#   member  = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
-# }
-# resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
-#   count      = var.shared_vpc ? 1 : 0
-#   project    = var.host_project
-#   region = var.region
-#   subnetwork = var.subnetwork
-#   role       = "roles/compute.networkUser"
-#   member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
-# }
-# resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_member" {
-#   count      = var.shared_vpc ? 1 : 0
-#   project    = var.host_project
-#   region = var.region
-#   subnetwork = var.subnetwork
-#   role       = "roles/compute.networkUser"
-#   member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
-# }
+resource "google_project_iam_binding" "composer2_binding" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+  role    = "roles/composer.sharedVpcAgent"
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+resource "google_project_iam_binding" "network_binding" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  role    = "roles/compute.networkUser"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+resource "google_project_iam_binding" "composer3_binding" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  role    = "roles/composer.ServiceAgentV2Ext"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+resource "google_project_iam_member" "host_gke_member" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  role    = "roles/container.hostServiceAgentUser"
+  member  = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
+}
+resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
+  count      = var.shared_vpc ? 1 : 0
+  project    = var.host_project
+  region = var.region
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  subnetwork = var.subnetwork
+  role       = "roles/compute.networkUser"
+  member     = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
+}
+resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_member" {
+  count      = var.shared_vpc ? 1 : 0
+  project    = var.host_project
+  region = var.region
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  subnetwork = var.subnetwork
+  role       = "roles/compute.networkUser"
+  member     = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
+}
 
 resource "google_project_iam_binding" "kms_cloud_composer" {
   count   = 1
   project =var.project_id
+   lifecycle {
+    ignore_changes = [ members ]
+  }
   role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
