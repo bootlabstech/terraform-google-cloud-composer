@@ -6,7 +6,7 @@ resource "google_composer_environment" "composer" {
   labels   = length(keys(var.labels)) < 0 ? null : var.labels
   lifecycle {
     ignore_changes = [
-      labels,pypi_packages
+      labels, config[0].software_config[0].pypi_packages
     ]
   }
   config {
@@ -83,7 +83,7 @@ resource "google_service_account" "service_account" {
 resource "google_project_iam_member" "composer-worker" {
   project = var.project_id
    lifecycle {
-    ignore_changes = [ members ]
+    ignore_changes = [ member ]
   }
   role    = "roles/composer.worker"
   member  = "serviceAccount:${google_service_account.service_account.email}"
@@ -160,7 +160,7 @@ resource "google_project_iam_member" "host_gke_member" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
    lifecycle {
-    ignore_changes = [ members ]
+    ignore_changes = [ member ]
   }
   role    = "roles/container.hostServiceAgentUser"
   member  = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
@@ -170,7 +170,7 @@ resource "google_compute_subnetwork_iam_member" "host_cloudservices_member" {
   project    = var.host_project
   region = var.region
    lifecycle {
-    ignore_changes = [ members ]
+    ignore_changes = [ member ]
   }
   subnetwork = var.subnetwork
   role       = "roles/compute.networkUser"
@@ -181,7 +181,7 @@ resource "google_compute_subnetwork_iam_member" "host_container_engine_robot_mem
   project    = var.host_project
   region = var.region
    lifecycle {
-    ignore_changes = [ members ]
+    ignore_changes = [ member ]
   }
   subnetwork = var.subnetwork
   role       = "roles/compute.networkUser"
