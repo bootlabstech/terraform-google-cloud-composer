@@ -17,6 +17,7 @@ resource "google_composer_environment" "composer" {
     node_config {
       network         = var.network
       subnetwork      = var.subnetwork
+      enable_ip_masq_agent = true
       service_account = google_service_account.service_account.email
       dynamic "ip_allocation_policy" {
         for_each = var.use_ip_allocation_policy ? [1] : []
