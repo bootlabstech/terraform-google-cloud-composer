@@ -11,19 +11,19 @@ resource "google_composer_environment" "composer" {
   }
   config {
     environment_size = var.environment_size
-   software_config {
-  image_version = var.image_version
-  
-  # Only set these values if enable_software_config is true
-  airflow_config_overrides = var.enable_software_config ? var.airflow_config_overrides : null
-  pypi_packages = var.enable_software_config ? var.pypi_packages : null
-  env_variables = var.enable_software_config ? var.env_variables : null
-}
+    software_config {
+      image_version = var.image_version
+
+      # Only set these values if enable_software_config is true
+      airflow_config_overrides = var.enable_software_config ? var.airflow_config_overrides : null
+      pypi_packages            = var.enable_software_config ? var.pypi_packages : null
+      env_variables            = var.enable_software_config ? var.env_variables : null
+    }
     node_config {
-      network         = var.network
-      subnetwork      = var.subnetwork
+      network              = var.network
+      subnetwork           = var.subnetwork
       enable_ip_masq_agent = true
-      service_account = google_service_account.service_account.email
+      service_account      = google_service_account.service_account.email
       dynamic "ip_allocation_policy" {
         for_each = var.use_ip_allocation_policy ? [1] : []
         content {
@@ -35,15 +35,15 @@ resource "google_composer_environment" "composer" {
     encryption_config {
       kms_key_name = var.kms_key_name
     }
-# dynamic "software_config" {
-#   for_each = var.enable_software_config ? [{}] : []
-#   content {
-#     airflow_config_overrides = var.airflow_config_overrides
-#     pypi_packages = var.pypi_packages
-#     env_variables = var.env_variables
-#     
-#   }
-# }
+    # dynamic "software_config" {
+    #   for_each = var.enable_software_config ? [{}] : []
+    #   content {
+    #     airflow_config_overrides = var.airflow_config_overrides
+    #     pypi_packages = var.pypi_packages
+    #     env_variables = var.env_variables
+    #     
+    #   }
+    # }
     dynamic "private_environment_config" {
       for_each = var.use_private_environment ? [{}] : []
       content {
@@ -89,17 +89,17 @@ resource "google_service_account" "service_account" {
 }
 resource "google_project_iam_member" "composer-worker" {
   project = var.project_id
-   lifecycle {
-    ignore_changes = [ member ]
+  lifecycle {
+    ignore_changes = [member]
   }
-  role    = "roles/composer.worker"
-  member  = "serviceAccount:${google_service_account.service_account.email}"
+  role   = "roles/composer.worker"
+  member = "serviceAccount:${google_service_account.service_account.email}"
 }
 resource "google_project_iam_binding" "composer1_binding" {
   project = var.project_id
   role    = "roles/composer.ServiceAgentV2Ext"
-   lifecycle {
-    ignore_changes = [ members ]
+  lifecycle {
+    ignore_changes = [members]
   }
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
@@ -111,7 +111,7 @@ resource "google_project_iam_binding" "serviceAccount_binding" {
   project = var.project_id
   role    = "roles/iam.serviceAccountAdmin"
   lifecycle {
-    ignore_changes = [ members ]
+    ignore_changes = [members]
   }
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
@@ -197,11 +197,11 @@ data "google_project" "service_project" {
 
 resource "google_project_iam_binding" "kms_cloud_composer" {
   count   = 1
-  project =var.project_id
-   lifecycle {
-    ignore_changes = [ members ]
+  project = var.project_id
+  lifecycle {
+    ignore_changes = [members]
   }
-  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
     "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com",
