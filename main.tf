@@ -30,18 +30,15 @@ resource "google_composer_environment" "composer" {
     encryption_config {
       kms_key_name = var.kms_key_name
     }
-     
-    dynamic "software_config" {
-    for_each = [1]
-    content {
-      image_version = var.image_version
-      
- # Only set these values if enable_software_config is true
-      airflow_config_overrides = var.enable_software_config ? var.airflow_config_overrides : null
-      pypi_packages = var.enable_software_config ? var.pypi_packages : null
-      env_variables = var.enable_software_config ? var.env_variables : null
-    }
+dynamic "software_config" {
+  for_each = var.enable_software_config ? [{}] : []
+  content {
+    airflow_config_overrides = var.airflow_config_overrides
+    pypi_packages = var.pypi_packages
+    env_variables = var.env_variables
+    image_version = var.image_version
   }
+}
     dynamic "private_environment_config" {
       for_each = var.use_private_environment ? [{}] : []
       content {
