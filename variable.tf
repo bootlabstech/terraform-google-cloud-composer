@@ -41,7 +41,10 @@ variable "environment_size" {
   type        = string
   description = " The environment size controls the performance parameters of the managed Cloud Composer infrastructure that includes the Airflow database."
 }
-
+variable "enable_ip_masq_agent" {
+  type        = bool
+  description = "enable the enable_ip_masq_agent"
+}
 variable "network" {
   type        = string
   description = "The VPC network to host the composer cluster."

@@ -22,7 +22,7 @@ resource "google_composer_environment" "composer" {
     node_config {
       network              = var.network
       subnetwork           = var.subnetwork
-      enable_ip_masq_agent = true
+      enable_ip_masq_agent = var.enable_ip_masq_agent
       service_account      = google_service_account.service_account.email
       dynamic "ip_allocation_policy" {
         for_each = var.use_ip_allocation_policy ? [1] : []
