@@ -12,8 +12,7 @@ resource "google_composer_environment" "composer" {
   config {
     environment_size = var.environment_size
     # software_config {
-    #   image_version = var.image_version
-      
+    #   image_version = var.image_version  
     # }
     node_config {
       network         = var.network
