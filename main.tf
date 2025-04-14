@@ -63,13 +63,13 @@ resource "google_composer_environment" "composer" {
   # }
   depends_on = [
     google_project_iam_binding.composer1_binding,
-    # google_project_iam_binding.composer2_binding,
-    # google_project_iam_binding.composer3_binding,
+    google_project_iam_binding.composer2_binding,
+    google_project_iam_binding.composer3_binding,
     google_project_iam_binding.serviceAccount_binding,
-    # google_project_iam_binding.network_binding,
-    # google_project_iam_member.host_gke_member,
-    # google_compute_subnetwork_iam_member.host_cloudservices_member,
-    # google_compute_subnetwork_iam_member.host_container_engine_robot_member,
+    google_project_iam_binding.network_binding,
+    google_project_iam_member.host_gke_member,
+    google_compute_subnetwork_iam_member.host_cloudservices_member,
+    google_compute_subnetwork_iam_member.host_container_engine_robot_member,
     google_project_iam_member.composer-worker,
     google_project_iam_binding.kms_cloud_composer
   ]
