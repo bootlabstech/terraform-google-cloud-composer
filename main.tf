@@ -57,6 +57,20 @@ resource "google_composer_environment" "composer" {
         recurrence = var.maintenance_recurrence
       }
     }
+    dynamic "recovery_config" {
+      for_each = var.enable_scheduled_snapshot ? [{}] : []
+      content {
+        dynamic "scheduled_snapshots_config" {
+          for_each = var.enable_scheduled_snapshot ? [{}] : []
+          content {
+            enabled                    = var.scheduled_snapshots_enabled
+            snapshot_location          = var.snapshot_location
+            snapshot_creation_schedule = var.snapshot_creation_schedule
+            time_zone                  = var.snapshot_time_zone
+          }
+        }
+      }
+    }
   }
   # timeouts {
   #   create = var.timeouts

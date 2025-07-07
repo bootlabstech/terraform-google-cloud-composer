@@ -134,3 +134,33 @@ variable "host_project" {
   type        = string
   description = "Shared vpc using network from host project"
 }
+
+variable "enable_scheduled_snapshot" {
+  description = "Enable scheduled snapshots for the Composer environment"
+  type        = bool
+  default     = false
+}
+
+variable "scheduled_snapshots_enabled" {
+  description = "Whether scheduled snapshots are enabled"
+  type        = bool
+  
+}
+
+variable "snapshot_location" {
+  description = "The Cloud Storage bucket location for storing snapshots"
+  type        = string
+  
+}
+
+variable "snapshot_creation_schedule" {
+  description = "Cron schedule for creating snapshots (e.g., '0 2 * * *' for daily at 2 AM)"
+  type        = string
+  
+}
+
+variable "snapshot_time_zone" {
+  description = "Time zone for the snapshot schedule"
+  type        = string
+ 
+}
