@@ -57,6 +57,7 @@ resource "google_composer_environment" "composer" {
         recurrence = var.maintenance_recurrence
       }
     }
+    
     dynamic "recovery_config" {
       for_each = var.enable_scheduled_snapshot ? [{}] : []
       content {
