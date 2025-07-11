@@ -150,18 +150,18 @@ resource "google_project_iam_binding" "composer2_binding" {
     "serviceAccount:${google_service_account.service_account.email}",
   ]
 }
-# resource "google_project_iam_binding" "network_binding" {
-#   count   = var.shared_vpc ? 1 : 0
-#   project = var.host_project
-#    lifecycle {
-#     ignore_changes = [ members ]
-#   }
-#   role    = "roles/compute.networkUser"
-#   members = [
-#     "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
-#     "serviceAccount:${google_service_account.service_account.email}",
-#   ]
-# }
+resource "google_project_iam_binding" "network_binding" {
+  count   = var.shared_vpc ? 1 : 0
+  project = var.host_project
+   lifecycle {
+    ignore_changes = [ members ]
+  }
+  role    = "roles/compute.networkUser"
+  members = [
+    "serviceAccount:service-${data.google_project.service_project.number}@cloudcomposer-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
 resource "google_project_iam_binding" "composer3_binding" {
   count   = var.shared_vpc ? 1 : 0
   project = var.host_project
