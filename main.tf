@@ -6,7 +6,10 @@ resource "google_composer_environment" "composer" {
   labels   = length(keys(var.labels)) < 0 ? null : var.labels
   lifecycle {
     ignore_changes = [
-      labels, config[0].software_config[0].pypi_packages
+      labels, 
+      config[0].software_config[0].pypi_packages,
+      config[0].software_config[0].airflow_config_overrides,
+      config[0].recovery_config
     ]
   }
   config {
